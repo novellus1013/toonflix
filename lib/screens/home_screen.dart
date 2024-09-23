@@ -10,7 +10,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int totalSeconds = 15;
+  static const twentyFiveMinutes = 1500;
+  int totalSeconds = twentyFiveMinutes;
   bool isRunning = false;
   int totalPomodoros = 0;
   late Timer timer;
@@ -31,7 +32,11 @@ class _HomeScreenState extends State<HomeScreen> {
       timer.cancel();
       isRunning = false;
       totalPomodoros += 1;
-      totalSeconds = 15;
+      totalSeconds = twentyFiveMinutes;
+    }
+
+    if (totalPomodoros == 3) {
+      totalPomodoros = 0;
     }
   }
 
@@ -45,10 +50,17 @@ class _HomeScreenState extends State<HomeScreen> {
   void onPressedClear() {
     timer.cancel();
     setState(() {
-      totalSeconds = 1500;
+      totalSeconds = twentyFiveMinutes;
       isRunning = false;
       totalPomodoros = 0;
     });
+  }
+
+  String format(int seconds) {
+    var duration = Duration(seconds: seconds);
+    return duration.toString().split('.')[0].substring(2, 7);
+    // print(duration);
+    // return '$seconds';
   }
 
   @override
@@ -62,7 +74,7 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Container(
               alignment: Alignment.bottomCenter,
               child: Text(
-                '$totalSeconds',
+                format(totalSeconds),
                 style: TextStyle(
                   color: Theme.of(context).cardColor,
                   fontWeight: FontWeight.bold,
@@ -140,7 +152,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           height: 10.0,
                         ),
                         Text(
-                          '$totalPomodoros / 12',
+                          '$totalPomodoros / 2',
                           style: TextStyle(
                             color: Theme.of(context)
                                 .textTheme
