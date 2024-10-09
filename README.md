@@ -32,3 +32,7 @@
 2. **리스트 크기**
    - ListView는 아이템 수가 적고, 리스트가 고정된 경우에 적합하다.
    - ListView.builder는 많은 아이템을 가진 대규모 리스트에 적합하다.
+
+
+## NetworkImageLoadException 오류
+1. **[문제 해결 과정 기록](https://velog.io/@novellus/NetworkImageLoadException-%EC%98%A4%EB%A5%98-%ED%95%B4%EA%B2%B0)**

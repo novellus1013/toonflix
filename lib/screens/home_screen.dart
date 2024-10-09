@@ -6,7 +6,7 @@ import '../models/webtoon_model.dart';
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
 
-  Future<List<WebtoonModel>> webtoons = ApiService.getTodaysToons();
+  final Future<List<WebtoonModel>> webtoons = ApiService.getTodaysToons();
 
   @override
   Widget build(BuildContext context) {
@@ -33,35 +33,13 @@ class HomeScreen extends StatelessWidget {
         future: webtoons,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            // return ListView(
-            //   //리스트 컴프리헨션, 대괄호 안에 직접 표현식을 작성
-            //   children: [
-            //     for (var webtoon in snapshot.data!) Text(webtoon.title)
-            //   ],
-            // );
-            // return ListView.builder(
-            //   scrollDirection: Axis.horizontal,
-            //   itemCount: snapshot.data!.length,
-            //   itemBuilder: (context, index) {
-            //     print(index);
-            //     var webtoon = snapshot.data![index];
-            //     return Text(webtoon.title);
-            //   },
-            // );
-            //ListView.builder() 에 구분자 추가
-            return ListView.separated(
-              scrollDirection: Axis.horizontal,
-              itemCount: snapshot.data!.length,
-              itemBuilder: (context, index) {
-                print(index);
-                var webtoon = snapshot.data![index];
-                return Text(webtoon.title);
-              },
-              separatorBuilder: (context, index) {
-                return const SizedBox(
-                  width: 20,
-                );
-              },
+            return Column(
+              children: [
+                const SizedBox(
+                  height: 50.0,
+                ),
+                Expanded(child: makeList(snapshot)),
+              ],
             );
           }
           return const Center(
@@ -69,6 +47,34 @@ class HomeScreen extends StatelessWidget {
           );
         },
       ),
+    );
+  }
+
+  ListView makeList(AsyncSnapshot<List<WebtoonModel>> snapshot) {
+    return ListView.separated(
+      scrollDirection: Axis.horizontal,
+      itemCount: snapshot.data!.length,
+      itemBuilder: (context, index) {
+        print(index);
+        var webtoon = snapshot.data![index];
+        return Column(
+          children: [
+            Image.network(
+              webtoon.thumb,
+              // headers: const {
+              //   "User-Agent":
+              //       "Mozilla/5.0 (Windows NT 10.0; Win64; x64; iPhone; CPU iPhone OS 13_5_1 like Mac OS X) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+              // },
+            ),
+            Text(webtoon.title),
+          ],
+        );
+      },
+      separatorBuilder: (context, index) {
+        return const SizedBox(
+          width: 40,
+        );
+      },
     );
   }
 }
