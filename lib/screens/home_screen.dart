@@ -33,7 +33,36 @@ class HomeScreen extends StatelessWidget {
         future: webtoons,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            return const Text("There is data!!!");
+            // return ListView(
+            //   //리스트 컴프리헨션, 대괄호 안에 직접 표현식을 작성
+            //   children: [
+            //     for (var webtoon in snapshot.data!) Text(webtoon.title)
+            //   ],
+            // );
+            // return ListView.builder(
+            //   scrollDirection: Axis.horizontal,
+            //   itemCount: snapshot.data!.length,
+            //   itemBuilder: (context, index) {
+            //     print(index);
+            //     var webtoon = snapshot.data![index];
+            //     return Text(webtoon.title);
+            //   },
+            // );
+            //ListView.builder() 에 구분자 추가
+            return ListView.separated(
+              scrollDirection: Axis.horizontal,
+              itemCount: snapshot.data!.length,
+              itemBuilder: (context, index) {
+                print(index);
+                var webtoon = snapshot.data![index];
+                return Text(webtoon.title);
+              },
+              separatorBuilder: (context, index) {
+                return const SizedBox(
+                  width: 20,
+                );
+              },
+            );
           }
           return const Center(
             child: CircularProgressIndicator(),
