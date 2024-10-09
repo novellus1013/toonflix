@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:toonflix/services/api_service.dart';
+import 'package:toonflix/widgets/webtoon_widget.dart';
 
 import '../models/webtoon_model.dart';
 
@@ -52,22 +53,18 @@ class HomeScreen extends StatelessWidget {
 
   ListView makeList(AsyncSnapshot<List<WebtoonModel>> snapshot) {
     return ListView.separated(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 10,
+        vertical: 20,
+      ),
       scrollDirection: Axis.horizontal,
       itemCount: snapshot.data!.length,
       itemBuilder: (context, index) {
-        print(index);
         var webtoon = snapshot.data![index];
-        return Column(
-          children: [
-            Image.network(
-              webtoon.thumb,
-              // headers: const {
-              //   "User-Agent":
-              //       "Mozilla/5.0 (Windows NT 10.0; Win64; x64; iPhone; CPU iPhone OS 13_5_1 like Mac OS X) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
-              // },
-            ),
-            Text(webtoon.title),
-          ],
+        return Webtoon(
+          title: webtoon.title,
+          thumb: webtoon.thumb,
+          id: webtoon.id,
         );
       },
       separatorBuilder: (context, index) {
