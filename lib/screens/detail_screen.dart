@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:toonflix/models/webtoon_detail_model.dart';
+import 'package:toonflix/models/webtoon_episode_model.dart';
+import 'package:toonflix/services/api_service.dart';
 
-class DetailScreen extends StatelessWidget {
+class DetailScreen extends StatefulWidget {
   final String title, thumb, id;
 
   const DetailScreen({
@@ -9,6 +12,21 @@ class DetailScreen extends StatelessWidget {
     required this.thumb,
     required this.id,
   });
+
+  @override
+  State<DetailScreen> createState() => _DetailScreenState();
+}
+
+class _DetailScreenState extends State<DetailScreen> {
+  late Future<WebtoonDetailModel> webtoon;
+  late Future<List<WebtoonEpisodeModel>> episodes;
+
+  @override
+  void initState() {
+    super.initState();
+    webtoon = ApiService.getToonById(widget.id);
+    episodes = ApiService.getLatestEpisodeById(widget.id);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +42,7 @@ class DetailScreen extends StatelessWidget {
         elevation: 03,
         centerTitle: true,
         title: Text(
-          title,
+          widget.title,
           style: const TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.w400,
@@ -40,7 +58,8 @@ class DetailScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Hero(
-                tag: id,
+                //stateful widget일 때 class 가 2개. widget.id에서 widget은 _DetailScreenState 의 부모 class DetailScreen을 가리킨다.
+                tag: widget.id,
                 child: Container(
                   clipBehavior: Clip.hardEdge,
                   decoration: BoxDecoration(
@@ -53,7 +72,7 @@ class DetailScreen extends StatelessWidget {
                         )
                       ]),
                   width: 250.0,
-                  child: Image.network(thumb),
+                  child: Image.network(widget.thumb),
                 ),
               ),
             ],
