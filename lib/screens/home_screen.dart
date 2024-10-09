@@ -3,43 +3,23 @@ import 'package:toonflix/services/api_service.dart';
 
 import '../models/webtoon_model.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+class HomeScreen extends StatelessWidget {
+  HomeScreen({super.key});
 
-  @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
-  List<WebtoonModel> webtoons = [];
-  bool isLoading = true;
-
-  void waitForWebToons() async {
-    webtoons = await ApiService.getTodaysToons();
-    isLoading = false;
-    setState(() {});
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    waitForWebToons();
-  }
+  Future<List<WebtoonModel>> webtoons = ApiService.getTodaysToons();
 
   @override
   Widget build(BuildContext context) {
-    print(webtoons);
-    print(isLoading);
     return Scaffold(
-      backgroundColor: Colors.amber,
+      backgroundColor: Colors.white,
       appBar: AppBar(
         //appBar 표면에 적용되는 overlay 색상
-        surfaceTintColor: Colors.red,
+        surfaceTintColor: Colors.white,
         //그림자 색상
-        shadowColor: Colors.blue,
+        shadowColor: Colors.black,
         backgroundColor: Colors.white,
         foregroundColor: Colors.green,
-        elevation: 20,
+        elevation: 03,
         centerTitle: true,
         title: const Text(
           "Today's 툰s",
@@ -48,6 +28,17 @@ class _HomeScreenState extends State<HomeScreen> {
             fontWeight: FontWeight.w400,
           ),
         ),
+      ),
+      body: FutureBuilder(
+        future: webtoons,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return const Text("There is data!!!");
+          }
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        },
       ),
     );
   }
