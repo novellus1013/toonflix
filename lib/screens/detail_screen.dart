@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toonflix/models/webtoon_detail_model.dart';
 import 'package:toonflix/models/webtoon_episode_model.dart';
 import 'package:toonflix/services/api_service.dart';
@@ -21,12 +22,46 @@ class DetailScreen extends StatefulWidget {
 class _DetailScreenState extends State<DetailScreen> {
   late Future<WebtoonDetailModel> webtoon;
   late Future<List<WebtoonEpisodeModel>> episodes;
+  late SharedPreferences prefes;
+  bool isLiked = false;
+
+  Future initPrefs() async {
+    prefes = await SharedPreferences.getInstance();
+    final likedToons = prefes.getStringList('likedToons');
+    if (likedToons != null) {
+      if (likedToons.contains(widget.id) == true) {
+        setState(() {
+          isLiked = true;
+        });
+      }
+    } else {
+      //user가 처음 앱을 실행할 경우 좋아요 한 id 들을 저장할 list 생성. 비동기라 await 필수
+      await prefes.setStringList('likedToons', []);
+    }
+  }
 
   @override
   void initState() {
     super.initState();
     webtoon = ApiService.getToonById(widget.id);
     episodes = ApiService.getLatestEpisodeById(widget.id);
+    initPrefs();
+  }
+
+  onTapHeart() async {
+    final likedToons = prefes.getStringList('likedToons');
+    if (likedToons != null) {
+      if (isLiked) {
+        likedToons.remove(widget.id);
+      } else {
+        likedToons.add(widget.id);
+      }
+      //likedToons에 id가 추가되거나 제거될 때마다 prefes안에 있는 'likedToons' list와 동기화해서 실시간으로 반영해주어야 함.
+      await prefes.setStringList('likedToons', likedToons);
+      setState(() {
+        isLiked = !isLiked;
+      });
+    }
   }
 
   @override
@@ -49,6 +84,14 @@ class _DetailScreenState extends State<DetailScreen> {
             fontWeight: FontWeight.w400,
           ),
         ),
+        actions: [
+          IconButton(
+            onPressed: onTapHeart,
+            icon: Icon(
+              isLiked ? Icons.favorite : Icons.favorite_outline_outlined,
+            ),
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Padding(
